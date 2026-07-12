@@ -71,8 +71,8 @@
             <input type="range" id="input-speed" min="50" max="500" value="200">
         </div>
         <div class="config-group">
-            <label>Escala Sprite: <span id="val-scale">1</span></label>
-            <input type="range" id="input-scale" min="0.5" max="5" step="0.1" value="1">
+            <label>Escala Sprite: <span id="val-scale">0.1</span></label>
+            <input type="range" id="input-scale" min="0.05" max="1" step="0.01" value="0.1">
         </div>
         <div class="config-group">
             <label>Velocidad Animación: <span id="val-fps">10</span> fps</label>
@@ -85,7 +85,7 @@
     <script>
         const gameConfig = {
             speed: 200,
-            scale: 1,
+            scale: 0.1, // Escala inicial pequeña porque tus frames son de 1920x1080
             animFps: 10
         };
 
@@ -96,7 +96,7 @@
             parent: 'game-container',
             pixelArt: true,
             fps: {
-                target: 30, // Forzamos el loop del juego a 30 FPS fijos
+                target: 30, // Forzamos el loop del juego a 30 FPS constantes
                 forceSetTimeOut: true
             },
             physics: {
@@ -115,34 +115,37 @@
         let debugText;
 
         function preload() {
-            // Carga de recursos (Verifica que GolfballWalk/ exista y se llame así tu JSON/PNG)
+            // Rutas a tus archivos en el repositorio de GitHub
             this.load.atlas('golfball_idle', 'Characters/Golfball/GolfballIdle/GolfballaIdle.png', 'Characters/Golfball/GolfballIdle/GolfballIdle.json');
             this.load.atlas('golfball_walk', 'Characters/Golfball/GolfballWalk/GolfballWalk.png', 'Characters/Golfball/GolfballWalk/GolfballWalk.json');
             
-            // Captura de errores de carga
             this.load.on('loaderror', function (fileObj) {
                 if(debugText) debugText.setText('Error cargando: ' + fileObj.src);
             });
         }
 
         function create() {
-            // Texto de Debug en pantalla
             debugText = this.add.text(10, 570, 'Cargando texturas...', { font: '14px monospace', fill: '#00ff00' }).setDepth(100);
 
             try {
-                // Extraer de forma dinámica todos los frames que existan dentro de los JSONs
+                // Obtener y ordenar numéricamente los IDs de los frames del JSON de Idle
                 const idleFrameNames = this.textures.get('golfball_idle').getFrameNames();
+                idleFrameNames.sort((a, b) => parseInt(a) - parseInt(b));
+
+                // Obtener y ordenar numéricamente los IDs de los frames del JSON de Walk
                 const walkFrameNames = this.textures.get('golfball_walk').getFrameNames();
+                walkFrameNames.sort((a, b) => parseInt(a) - parseInt(b));
 
                 if (idleFrameNames.length === 0 || walkFrameNames.length === 0) {
-                    debugText.setText('Error: JSONs vacíos o rutas incorrectas.');
+                    debugText.setText('Error: No se encontraron frames dentro de los archivos JSON.');
                     return;
                 }
 
+                // Mapear frames estructurados para Phaser
                 const idleFrames = idleFrameNames.map(name => ({ key: 'golfball_idle', frame: name }));
                 const walkFrames = walkFrameNames.map(name => ({ key: 'golfball_walk', frame: name }));
 
-                // Crear animaciones
+                // Crear animación de reposo
                 this.anims.create({
                     key: 'idle',
                     frames: idleFrames,
@@ -150,6 +153,7 @@
                     repeat: -1
                 });
 
+                // Crear animación de caminata
                 this.anims.create({
                     key: 'walk',
                     frames: walkFrames,
@@ -157,15 +161,15 @@
                     repeat: -1
                 });
 
-                // Crear Jugador
+                // Crear el jugador centrado usando el primer frame disponible
                 player = this.physics.add.sprite(400, 300, 'golfball_idle', idleFrameNames[0]);
                 player.setCollideWorldBounds(true);
                 player.setScale(gameConfig.scale);
                 player.play('idle');
                 
-                debugText.setText('Sprites cargados con éxito. 30 FPS fijos.');
+                debugText.setText('Beta lista. Loop: 30 FPS fijos.');
             } catch (e) {
-                debugText.setText('Error en Create: ' + e.message);
+                debugText.setText('Error en inicialización: ' + e.message);
             }
 
             // --- JOYSTICK VIRTUAL ---
@@ -203,7 +207,7 @@
         function update() {
             if (!player || !player.anims) return;
 
-            // Movimiento por Joystick
+            // Control de movimiento e intercambio de animación
             if (isDragging && (Math.abs(joystickVector.x) > 0.1 || Math.abs(joystickVector.y) > 0.1)) {
                 player.setVelocityX(joystickVector.x * gameConfig.speed);
                 player.setVelocityY(joystickVector.y * gameConfig.speed);
