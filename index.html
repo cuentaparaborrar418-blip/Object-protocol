@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Golfball Demo Beta - Debug Mode</title>
+    <title>Golfball Demo Beta - Fixed</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
     <style>
         body {
@@ -83,19 +83,17 @@
     <div id="game-container"></div>
 
     <script>
-        // Consola de logs en memoria para imprimir en pantalla
         const logs = ["[SISTEMA]: Iniciando Consola de Depuración..."];
         
         function addLog(text) {
             console.log(text);
             logs.push(text);
-            if (logs.length > 15) logs.shift(); // Mantener solo los últimos 15 mensajes
+            if (logs.length > 15) logs.shift();
             if (window.debugTextDisplay) {
                 window.debugTextDisplay.setText(logs.join("\n"));
             }
         }
 
-        // Capturar errores fatales globales de JavaScript (por ejemplo si Phaser se rompe)
         window.onerror = function (msg, url, line) {
             addLog(`[ERROR GLOBAL]: ${msg} en línea ${line}`);
             return false;
@@ -114,7 +112,7 @@
             parent: 'game-container',
             pixelArt: true,
             fps: {
-                target: 30, // Forzamos el loop del juego a 30 FPS constantes
+                target: 30, // Loop a 30 FPS fijos
                 forceSetTimeOut: true
             },
             physics: {
@@ -134,8 +132,8 @@
         function preload() {
             addLog("[PHASER]: Escena 'preload' iniciada.");
 
-            // Rutas de tus archivos
-            const idleImg = 'Characters/Golfball/GolfballIdle/GolfballaIdle.png';
+            // CORREGIDO: Eliminada la "a" intrusa de GolfballIdle.png
+            const idleImg = 'Characters/Golfball/GolfballIdle/GolfballIdle.png';
             const idleJson = 'Characters/Golfball/GolfballIdle/GolfballIdle.json';
             const walkImg = 'Characters/Golfball/GolfballWalk/GolfballWalk.png';
             const walkJson = 'Characters/Golfball/GolfballWalk/GolfballWalk.json';
@@ -146,21 +144,18 @@
             addLog(`[CARGA]: Intentando cargar WALK desde: ${walkImg}`);
             this.load.atlas('golfball_walk', walkImg, walkJson);
 
-            // Escuchar el progreso individual de archivos
             this.load.on('filecomplete', function (key, type, data) {
-                addLog(`[ÉXITO]: Recurso cargado con éxito -> Clave: ${key} (${type})`);
+                addLog(`[ÉXITO]: Recurso cargado -> Clave: ${key} (${type})`);
             });
 
-            // Escuchar si algún archivo da error (CORS o 404)
             this.load.on('loaderror', function (fileObj) {
-                addLog(`[ERROR 404/CORS]: No se pudo descargar el archivo: ${fileObj.src}`);
+                addLog(`[ERROR 404]: No se encontró: ${fileObj.src}`);
             });
         }
 
         function create() {
             addLog("[PHASER]: Escena 'create' iniciada.");
 
-            // Crear el objeto de texto para la consola en pantalla
             window.debugTextDisplay = this.add.text(15, 15, logs.join("\n"), { 
                 font: '13px monospace', 
                 fill: '#00ff00',
@@ -169,39 +164,28 @@
             }).setDepth(1000);
 
             try {
-                // Verificar si las texturas realmente existen en la memoria de Phaser
                 if (!this.textures.exists('golfball_idle') || !this.textures.exists('golfball_walk')) {
-                    addLog("[ERROR]: Las texturas no existen en memoria. Revisa los errores de carga de arriba.");
+                    addLog("[ERROR]: Falta alguna textura en memoria.");
                     return;
                 }
 
-                // Obtener frames del JSON de Idle
                 const idleFrameNames = this.textures.get('golfball_idle').getFrameNames();
                 addLog(`[JSON IDLE]: Encontrados ${idleFrameNames.length} frames.`);
                 idleFrameNames.sort((a, b) => parseInt(a) - parseInt(b));
 
-                // Obtener frames del JSON de Walk
                 const walkFrameNames = this.textures.get('golfball_walk').getFrameNames();
                 addLog(`[JSON WALK]: Encontrados ${walkFrameNames.length} frames.`);
                 walkFrameNames.sort((a, b) => parseInt(a) - parseInt(b));
 
-                if (idleFrameNames.length === 0 || walkFrameNames.length === 0) {
-                    addLog("[ERROR]: Los JSONs se leyeron pero contienen 0 frames válidos.");
-                    return;
-                }
-
-                // Mapear frames
                 const idleFrames = idleFrameNames.map(name => ({ key: 'golfball_idle', frame: name }));
                 const walkFrames = walkFrameNames.map(name => ({ key: 'golfball_walk', frame: name }));
 
-                // Crear animaciones
                 this.anims.create({
                     key: 'idle',
                     frames: idleFrames,
                     frameRate: gameConfig.animFps,
                     repeat: -1
                 });
-                addLog("[ANIMACIÓN]: Registrada animación 'idle'.");
 
                 this.anims.create({
                     key: 'walk',
@@ -209,21 +193,18 @@
                     frameRate: gameConfig.animFps,
                     repeat: -1
                 });
-                addLog("[ANIMACIÓN]: Registrada animación 'walk'.");
 
-                // Crear el jugador centrado en la pantalla
                 player = this.physics.add.sprite(400, 300, 'golfball_idle', idleFrameNames[0]);
                 player.setCollideWorldBounds(true);
                 player.setScale(gameConfig.scale);
                 player.play('idle');
                 
-                addLog("[JUGADOR]: ¡Sprite creado en pantalla con éxito!");
-                addLog("[MOTOR]: Ejecutando a 30 FPS constantes.");
+                addLog("[JUGADOR]: ¡Sprite creado con éxito!");
             } catch (e) {
                 addLog("[EXCEPCIÓN CRÍTICA]: " + e.message);
             }
 
-            // --- JOYSTICK VIRTUAL ---
+            // --- JOYSTICK ---
             joystickBase = this.add.circle(120, 480, 60, 0xffffff, 0.2).setDepth(10);
             joystickThumb = this.add.circle(120, 480, 30, 0x00ff00, 0.6).setDepth(11);
             joystickThumb.setInteractive({ draggable: true });
@@ -276,7 +257,7 @@
             }
         }
 
-        // --- MANEJO DEL PANEL DE CONFIGURACIÓN ---
+        // --- MANEJO PANEL CONFIG ---
         const btnToggle = document.getElementById('toggle-config');
         const panel = document.getElementById('config-panel');
 
