@@ -1,0 +1,115 @@
+{
+  "frames": {
+    "c90810d7-188f-4b98-9cbe-9d05bc560a5e-1_all_2125": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 1920,
+        "h": 1080
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "sourceSize": {
+        "w": 1920,
+        "h": 1080
+      }
+    },
+    "c90810d7-188f-4b98-9cbe-9d05bc560a5e-1_all_2124": {
+      "frame": {
+        "x": 1922,
+        "y": 1,
+        "w": 1920,
+        "h": 1080
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "sourceSize": {
+        "w": 1920,
+        "h": 1080
+      }
+    },
+    "c90810d7-188f-4b98-9cbe-9d05bc560a5e-1_all_2123": {
+      "frame": {
+        "x": 3843,
+        "y": 1,
+        "w": 1920,
+        "h": 1080
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "sourceSize": {
+        "w": 1920,
+        "h": 1080
+      }
+    },
+    "c90810d7-188f-4b98-9cbe-9d05bc560a5e-1_all_2122": {
+      "frame": {
+        "x": 1,
+        "y": 1082,
+        "w": 1920,
+        "h": 1080
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "sourceSize": {
+        "w": 1920,
+        "h": 1080
+      }
+    },
+    "c90810d7-188f-4b98-9cbe-9d05bc560a5e-1_all_2121": {
+      "frame": {
+        "x": 1922,
+        "y": 1082,
+        "w": 1920,
+        "h": 1080
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "sourceSize": {
+        "w": 1920,
+        "h": 1080
+      }
+    }
+  },
+  "meta": {
+    "app": "Sprite Sheet Maker",
+    "version": "1.0",
+    "image": "spritesheet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 5764,
+      "h": 2163
+    },
+    "scale": "1"
+  }
+}
